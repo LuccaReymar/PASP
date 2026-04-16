@@ -1,9 +1,14 @@
+import connectMongoDB from "@/config/mongodb";
+import LoginComponent from "./components/LoginComponent";
 
 
 export default function Home() {
+
+
+  connectMongoDB();
   return (
     <div>
-      <h1>PASP Project</h1>
+      <LoginComponent/>
     </div>
   );
 }
