@@ -1,51 +1,16 @@
+import { Division, Forfeit, League, MatchType } from "@/types/match";
 import mongoose, { Schema, Model } from "mongoose";
 
-export enum Division {
-  MONDAY_6PM = 'Mondays 6PM',
-  WEDNESDAY_5PM = 'Wednesdays 5PM',
-}
 
-export enum League {
-  MEN = "Men's",
-  WOMEN = "Women's",
-  COED = 'Coed',
-}
-
-export enum Forfiet {
-  NONE,
-  TEAMONE,
-  TEAMTWO,
-  BOTH,
-}
-
-export type MatchType = {
-  teamOneName : string,
-  teamTwoName: string,
-  sport: string,
-  location: string,
-  date: Date,
-  division: Division,
-  league: League,
-  forfiet?: Forfiet,
-  teamOneScore?: number,
-  teamTwoScore?: number,
-  teamOneEmailRecepient?: string,
-  teamTwoEmailRecepient?: string,
-  teamOneEmailDate?: Date,
-  teamTwoEmailDate?: Date,
-  teamOneBuybackDate?: Date,
-  teamTwoBackBack?: boolean,
-  completed: boolean
-};
 
 export type MatchDoc = mongoose.HydratedDocument<MatchType>;
 
 const matchSchema = new Schema<MatchType>(
   {
-    teamOneName: { type: String, required: true },
-    teamTwoName: { type: String, required: true },
-    sport: { type: String, required: true },
-    location: { type: String, required: true },
+    teamOneName: { type: String, required: true, trim: true },
+    teamTwoName: { type: String, required: true, trim: true },
+    sport: { type: String, required: true, trim: true },
+    location: { type: String, required: true, trim: true },
     date: { type: Date, required: true },
     division: {
       type: String,
@@ -57,23 +22,29 @@ const matchSchema = new Schema<MatchType>(
       enum: League,
       required: true
     },
-    forfiet: {
+    forfeit: {
       type: Number,
-      enum: Forfiet,
+      enum: Forfeit,
       required: false
     },
     teamOneScore: { type: Number, required: false },
     teamTwoScore: { type: Number, required: false },
-    teamOneEmailRecepient: { type: String, required: false },
-    teamTwoEmailRecepient: { type: String, required: false },
+    teamOneEmailRecipient: { type: String, required: false },
+    teamTwoEmailRecipient: { type: String, required: false },
     teamOneEmailDate: { type: Date, required: false },
     teamTwoEmailDate: { type: Date, required: false },
     teamOneBuybackDate: { type: Date, required: false },
-    teamTwoBackBack: { type: Boolean, required: false },
-    completed: { type: Boolean, required: true }
+    teamTwoBuybackDate: { type: Date, required: false },
+    completed: { type: Boolean, required: true, default: false }
   },
   { timestamps: true }
 );
+
+// Indexes for frequently queried fields
+matchSchema.index({ date: 1 });
+matchSchema.index({ division: 1, league: 1 });
+matchSchema.index({ teamOneName: 1, teamTwoName: 1 });
+matchSchema.index({ completed: 1 });
 
 export const Match: Model<MatchType> =
   (mongoose.models.Match as Model<MatchType>) ||
