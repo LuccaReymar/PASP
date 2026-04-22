@@ -14,18 +14,18 @@ const Navbar = () => {
   };
 
   return (
-    <div className="w-full px-8 h-fit flex justify-between items-center border-b-2 border-gray-200 font-bold text-lg p-4 bg-white">
+    <div className="w-full px-8 h-fit flex justify-between items-center border-b-2 border-gray-200 font-bold text-lg p-4 bg-white relative">
       <Link href="/dashboard" className="hover:text-blue-600">
         PA Support Program
       </Link>
       
-      <span className="text-sm font-semibold">
+      <span className="absolute left-1/2 -translate-x-1/2 text-sm font-semibold">
         <span
           className={
             (role == UserRole.ADMIN ? `bg-blue-400` : `bg-green-400`) +
-            " font-bold p-1 rounded-lg text-white"
+            " font-bold px-3 py-1 rounded-lg text-white"
           }>
-          {role}
+          {role === UserRole.ADMIN ? "Admin Dashboard" : "PA Dashboard"}
         </span>
       </span>
       <div className="flex gap-6">
