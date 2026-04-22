@@ -75,27 +75,25 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto">
-        <div className="sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900">Dashboard</h1>
-              {firstName && (
-                <p className="text-lg text-blue-600 font-semibold mt-1">
-                  Welcome back, {firstName}!
-                </p>
-              )}
-              <p className="text-gray-600 mt-1">
-                Manage and track all your matches
+        <div className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900">Dashboard</h1>
+            {firstName && (
+              <p className="text-lg text-blue-600 font-semibold mt-1">
+                Welcome back, {firstName}!
               </p>
-            </div>
-            {role === UserRole.ADMIN && (
-              <Link
-                href="/create-match"
-                className="px-6 py-3 bg-linear-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition font-bold shadow-md hover:shadow-lg">
-                + Create Match
-              </Link>
             )}
+            <p className="text-gray-600 mt-1">
+              Manage and track all your matches
+            </p>
           </div>
+          {role === UserRole.ADMIN && (
+            <Link
+              href="/create-match"
+              className="px-6 py-3 bg-linear-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition font-bold shadow-md hover:shadow-lg">
+              + Create Match
+            </Link>
+          )}
         </div>
         <div className="max-w-7xl mx-auto px-6 py-8">
           {/* Upcoming Matches */}

@@ -58,17 +58,23 @@ export const MatchComponent = ({ match }: MatchComponentProps) => {
   return (
     <div
       ref={componentRef}
-      className="w-72 min-w-72 h-fit p-3 bg-white rounded-lg flex flex-col hover:cursor-pointer border border-gray-200 shadow-sm hover:shadow-md transition relative"
+      className="w-80 min-w-80 h-fit p-3 bg-white rounded-lg flex flex-col hover:cursor-pointer border border-gray-200 shadow-sm hover:shadow-md transition relative"
       onClick={() => setShowDropdown(!showDropdown)}>
       <h1 className="font-semibold">
         {`${match.teamOneName}`} <span className="text-sm font-medium">vs</span>{" "}
         {`${match.teamTwoName}`}
       </h1>
-      <h2 className="text-sm text-gray-600">
-        {matchDate.toDateString()}, {match.league}
+      <h2 className="text-sm text-blue-600">
+        {match.division}
       </h2>
       <h2 className="text-sm text-gray-600">
-        {`${match.sport}, ${match.division}`}
+        {matchDate.toDateString()} @ {match.location}
+      </h2>
+      <h2 className="text-sm text-gray-600">
+        {`${match.league} ${match.sport}`}
+      </h2>
+      <h2 className="text-sm text-gray-600">
+        {`${match.location}`}
       </h2>
       {showDropdown && (
         <div
