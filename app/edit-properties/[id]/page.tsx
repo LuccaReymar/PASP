@@ -6,6 +6,30 @@ import { Division, League, MatchType } from "@/types/match";
 import { useAuth, UserRole } from "@/app/context/AuthContext";
 import Link from "next/link";
 
+// Helper functions for proper date handling
+function formatDateForInput(date: Date | string): string {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const hours = String(d.getHours()).padStart(2, "0");
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+function parseDateFromInput(dateString: string): Date {
+  const [datePart, timePart] = dateString.split("T");
+  const [year, month, day] = datePart.split("-");
+  const [hours, minutes] = timePart ? timePart.split(":") : ["00", "00"];
+  return new Date(
+    parseInt(year),
+    parseInt(month) - 1,
+    parseInt(day),
+    parseInt(hours),
+    parseInt(minutes),
+  );
+}
+
 export default function EditProperties() {
   const params = useParams();
   const router = useRouter();
@@ -22,6 +46,8 @@ export default function EditProperties() {
   const [division, setDivision] = useState<Division>(Division.MONDAY_6PM);
   const [sport, setSport] = useState("");
   const [location, setLocation] = useState("");
+  const [teamOneEmail, setTeamOneEmail] = useState("");
+  const [teamTwoEmail, setTeamTwoEmail] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -43,11 +69,13 @@ export default function EditProperties() {
         setMatch(matchData);
         setTeamOneName(matchData.teamOneName);
         setTeamTwoName(matchData.teamTwoName);
-        setDate(new Date(matchData.date).toISOString().slice(0, 16));
+        setDate(formatDateForInput(matchData.date).slice(0, 10));
         setLeague(matchData.league);
         setDivision(matchData.division);
         setSport(matchData.sport);
         setLocation(matchData.location);
+        setTeamOneEmail(matchData.teamOneEmailRecipient || "");
+        setTeamTwoEmail(matchData.teamTwoEmailRecipient || "");
       } else {
         setError("Match not found");
       }
@@ -72,11 +100,13 @@ export default function EditProperties() {
     const updateData: Partial<MatchType> = {
       teamOneName,
       teamTwoName,
-      date: new Date(date),
+      date: parseDateFromInput(date),
       league,
       division,
       sport,
       location,
+      teamOneEmailRecipient: teamOneEmail || undefined,
+      teamTwoEmailRecipient: teamTwoEmail || undefined,
     };
 
     try {
@@ -127,31 +157,59 @@ export default function EditProperties() {
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Team 1 Name *
-                </label>
-                <input
-                  type="text"
-                  value={teamOneName}
-                  onChange={(e) => setTeamOneName(e.target.value)}
-                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-purple-500 focus:outline-none transition"
-                  placeholder="Team One"
-                  required
-                />
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Team 1 Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={teamOneName}
+                    onChange={(e) => setTeamOneName(e.target.value)}
+                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-purple-500 focus:outline-none transition"
+                    placeholder="Team One"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Team 1 Email (optional)
+                  </label>
+                  <input
+                    type="email"
+                    value={teamOneEmail}
+                    onChange={(e) => setTeamOneEmail(e.target.value)}
+                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-purple-500 focus:outline-none transition"
+                    placeholder="team1@example.com"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Team 2 Name *
-                </label>
-                <input
-                  type="text"
-                  value={teamTwoName}
-                  onChange={(e) => setTeamTwoName(e.target.value)}
-                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-purple-500 focus:outline-none transition"
-                  placeholder="Team Two"
-                  required
-                />
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Team 2 Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={teamTwoName}
+                    onChange={(e) => setTeamTwoName(e.target.value)}
+                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-purple-500 focus:outline-none transition"
+                    placeholder="Team Two"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Team 2 Email (optional)
+                  </label>
+                  <input
+                    type="email"
+                    value={teamTwoEmail}
+                    onChange={(e) => setTeamTwoEmail(e.target.value)}
+                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-purple-500 focus:outline-none transition"
+                    placeholder="team2@example.com"
+                  />
+                </div>
               </div>
             </div>
 
@@ -160,12 +218,41 @@ export default function EditProperties() {
                 Date & Time *
               </label>
               <input
-                type="datetime-local"
+                type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-purple-500 focus:outline-none transition"
                 required
               />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Sport *
+                </label>
+                <input
+                  type="text"
+                  value={sport}
+                  onChange={(e) => setSport(e.target.value)}
+                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-purple-500 focus:outline-none transition"
+                  placeholder="Soccer"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Location *
+                </label>
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-purple-500 focus:outline-none transition"
+                  placeholder="IM Fields"
+                  required
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
@@ -198,35 +285,6 @@ export default function EditProperties() {
                     </option>
                   ))}
                 </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Sport *
-                </label>
-                <input
-                  type="text"
-                  value={sport}
-                  onChange={(e) => setSport(e.target.value)}
-                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-purple-500 focus:outline-none transition"
-                  placeholder="Soccer"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Location *
-                </label>
-                <input
-                  type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-purple-500 focus:outline-none transition"
-                  placeholder="IM Fields"
-                  required
-                />
               </div>
             </div>
 

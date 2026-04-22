@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useAuth } from "@/app/context/AuthContext";
+import { useAuth, UserRole } from "@/app/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -18,18 +18,36 @@ const Navbar = () => {
       <Link href="/dashboard" className="hover:text-blue-600">
         PA Support Program
       </Link>
-      {isLoggedIn ? (
-        <div className="flex items-center gap-4">
-          <span className="text-sm font-normal">
-            {email} ({role})
-          </span>
+      
+      <span className="text-sm font-semibold">
+        <span
+          className={
+            (role == UserRole.ADMIN ? `bg-blue-400` : `bg-green-400`) +
+            " font-bold p-1 rounded-lg text-white"
+          }>
+          {role}
+        </span>
+      </span>
+      <div className="flex gap-6">
+        <Link
+          href="/dashboard"
+          className="text-base font-semibold hover:text-blue-600 transition">
+          Dashboard
+        </Link>
+        <Link
+          href="/search"
+          className="text-base font-semibold hover:text-blue-600 transition">
+          Search
+        </Link>
+        {isLoggedIn ? (
           <button
             onClick={handleLogout}
-            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm">
+            className="px-3 bg-red-500 text-white rounded hover:bg-red-600 text-sm">
             Logout
           </button>
-        </div>
-      ) : null}
+        ) : null}
+      </div>
+      
     </div>
   );
 };

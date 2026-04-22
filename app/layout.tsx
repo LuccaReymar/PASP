@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PA System Protocol",
+  title: "PA Support Program",
   description: "Software development project",
 };
 

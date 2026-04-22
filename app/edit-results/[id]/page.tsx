@@ -42,8 +42,6 @@ export default function EditResults() {
         const matchData = data.data;
         setMatch(matchData);
         setForfeit(matchData.forfeit || Forfeit.NONE);
-        setTeamOneScore(matchData.teamOneScore);
-        setTeamTwoScore(matchData.teamTwoScore);
         setTeamOneEmail(matchData.teamOneEmailRecipient || "");
         setTeamTwoEmail(matchData.teamTwoEmailRecipient || "");
         setTeamOneDate(
@@ -56,6 +54,14 @@ export default function EditResults() {
             ? new Date(matchData.teamTwoEmailDate).toISOString().slice(0, 16)
             : "",
         );
+        // Only display scores if match is complete
+        if (matchData.completed) {
+          setTeamOneScore(matchData.teamOneScore);
+          setTeamTwoScore(matchData.teamTwoScore);
+        } else {
+          setTeamOneScore(undefined);
+          setTeamTwoScore(undefined);
+        }
       } else {
         setError("Match not found");
       }

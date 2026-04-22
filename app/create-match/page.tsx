@@ -7,6 +7,20 @@ import { useAuth, UserRole } from "@/app/context/AuthContext";
 import { useEffect } from "react";
 import Link from "next/link";
 
+// Helper function for proper date handling
+function parseDateFromInput(dateString: string): Date {
+  const [datePart, timePart] = dateString.split("T");
+  const [year, month, day] = datePart.split("-");
+  const [hours, minutes] = timePart ? timePart.split(":") : ["00", "00"];
+  return new Date(
+    parseInt(year),
+    parseInt(month) - 1,
+    parseInt(day),
+    parseInt(hours),
+    parseInt(minutes),
+  );
+}
+
 export default function CreateMatch() {
   const router = useRouter();
   const { isLoggedIn, role } = useAuth();
@@ -18,6 +32,8 @@ export default function CreateMatch() {
   const [division, setDivision] = useState<Division>(Division.MONDAY_6PM);
   const [sport, setSport] = useState("");
   const [location, setLocation] = useState("");
+  const [teamOneEmail, setTeamOneEmail] = useState("");
+  const [teamTwoEmail, setTeamTwoEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -46,11 +62,13 @@ export default function CreateMatch() {
         body: JSON.stringify({
           teamOneName,
           teamTwoName,
-          date: new Date(date),
+          date: parseDateFromInput(date),
           league,
           division,
           sport,
           location,
+          teamOneEmailRecipient: teamOneEmail || undefined,
+          teamTwoEmailRecipient: teamTwoEmail || undefined,
           completed: false,
         }),
       });
@@ -94,31 +112,59 @@ export default function CreateMatch() {
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Team 1 Name *
-                </label>
-                <input
-                  type="text"
-                  value={teamOneName}
-                  onChange={(e) => setTeamOneName(e.target.value)}
-                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-green-500 focus:outline-none transition"
-                  placeholder="Team One"
-                  required
-                />
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Team 1 Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={teamOneName}
+                    onChange={(e) => setTeamOneName(e.target.value)}
+                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-green-500 focus:outline-none transition"
+                    placeholder="Team One"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Team 1 Email (optional)
+                  </label>
+                  <input
+                    type="email"
+                    value={teamOneEmail}
+                    onChange={(e) => setTeamOneEmail(e.target.value)}
+                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-green-500 focus:outline-none transition"
+                    placeholder="team1@example.com"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Team 2 Name *
-                </label>
-                <input
-                  type="text"
-                  value={teamTwoName}
-                  onChange={(e) => setTeamTwoName(e.target.value)}
-                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-green-500 focus:outline-none transition"
-                  placeholder="Team Two"
-                  required
-                />
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Team 2 Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={teamTwoName}
+                    onChange={(e) => setTeamTwoName(e.target.value)}
+                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-green-500 focus:outline-none transition"
+                    placeholder="Team Two"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Team 2 Email (optional)
+                  </label>
+                  <input
+                    type="email"
+                    value={teamTwoEmail}
+                    onChange={(e) => setTeamTwoEmail(e.target.value)}
+                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-green-500 focus:outline-none transition"
+                    placeholder="team2@example.com"
+                  />
+                </div>
               </div>
             </div>
 
@@ -127,12 +173,41 @@ export default function CreateMatch() {
                 Date & Time *
               </label>
               <input
-                type="datetime-local"
+                type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-green-500 focus:outline-none transition"
                 required
               />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Sport *
+                </label>
+                <input
+                  type="text"
+                  value={sport}
+                  onChange={(e) => setSport(e.target.value)}
+                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-green-500 focus:outline-none transition"
+                  placeholder="Soccer"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Location *
+                </label>
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-green-500 focus:outline-none transition"
+                  placeholder="IM Fields"
+                  required
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
@@ -165,35 +240,6 @@ export default function CreateMatch() {
                     </option>
                   ))}
                 </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Sport *
-                </label>
-                <input
-                  type="text"
-                  value={sport}
-                  onChange={(e) => setSport(e.target.value)}
-                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-green-500 focus:outline-none transition"
-                  placeholder="Soccer"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Location *
-                </label>
-                <input
-                  type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-green-500 focus:outline-none transition"
-                  placeholder="IM Fields"
-                  required
-                />
               </div>
             </div>
 
