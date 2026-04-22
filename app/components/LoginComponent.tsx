@@ -1,27 +1,35 @@
 "use client";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { useAuth, UserRole } from "@/app/context/AuthContext";
+import { useAuth } from "@/app/context/AuthContext";
+import Link from "next/link";
 
 const LoginComponent = () => {
   const router = useRouter();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<UserRole>(UserRole.PA);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const submitLogin = (e: React.FormEvent) => {
+  const submitLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
 
     if (!email || !password) {
       setError("Email and password are required");
       return;
     }
 
-    // Simple validation - in production, validate against backend
-    login(email, password, role);
-    router.push("/dashboard");
+    setLoading(true);
+    const result = await login(email, password);
+    setLoading(false);
+
+    if (result.success) {
+      router.push("/dashboard");
+    } else {
+      setError(result.error || "Login failed");
+    }
   };
 
   return (
@@ -45,21 +53,20 @@ const LoginComponent = () => {
             onChange={(e) => setPassword(e.target.value)}
             className="border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:border-blue-500"
           />
-          <label className="text-sm font-semibold mb-1">Role</label>
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value as UserRole)}
-            className="border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:border-blue-500">
-            <option value={UserRole.PA}>PA</option>
-            <option value={UserRole.ADMIN}>Admin</option>
-          </select>
           {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
           <button
             type="submit"
-            className="mt-4 rounded-lg border border-blue-500 bg-blue-500 text-white py-2 font-semibold hover:bg-blue-600 transition">
-            Submit
+            disabled={loading}
+            className="mt-4 rounded-lg border border-blue-500 bg-blue-500 text-white py-2 font-semibold hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">
+            {loading ? "Logging in..." : "Submit"}
           </button>
         </form>
+        <p className="mt-4 text-sm text-gray-600">
+          Don&apos;t have an account?{" "}
+          <Link href="/signup" className="text-blue-500 hover:text-blue-700 font-semibold">
+            Sign up
+          </Link>
+        </p>
       </div>
     </div>
   );
