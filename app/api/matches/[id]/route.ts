@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectMongoDB from '@/config/mongodb';
 import Match from '@/models/matchSchema';
-import { MatchType } from '@/models/matchSchema';
+import { MatchType } from '@/types/match';
 
 // GET single match
 export async function GET(

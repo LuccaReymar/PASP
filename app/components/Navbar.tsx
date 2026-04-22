@@ -8,8 +8,8 @@ const Navbar = () => {
   const { isLoggedIn, email, role, logout } = useAuth();
   const router = useRouter();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     router.push("/");
   };
 

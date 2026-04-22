@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 export default function Dashboard() {
   const [matches, setMatches] = useState<(MatchType & { _id?: string })[]>([]);
   const [loading, setLoading] = useState(true);
-  const { isLoggedIn, role } = useAuth();
+  const { isLoggedIn, role, firstName } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -79,6 +79,11 @@ export default function Dashboard() {
           <div className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
             <div>
               <h1 className="text-4xl font-bold text-gray-900">Dashboard</h1>
+              {firstName && (
+                <p className="text-lg text-blue-600 font-semibold mt-1">
+                  Welcome back, {firstName}!
+                </p>
+              )}
               <p className="text-gray-600 mt-1">
                 Manage and track all your matches
               </p>

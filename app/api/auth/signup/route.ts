@@ -3,6 +3,7 @@ import connectMongoDB from "@/config/mongodb";
 import User from "@/models/userSchema";
 import { UserRole } from "@/types/user";
 import bcrypt from "bcryptjs";
+import { createSession } from "@/lib/session";
 
 // POST - Create a new user
 export async function POST(request: NextRequest) {
@@ -47,6 +48,14 @@ export async function POST(request: NextRequest) {
       role,
     });
     await user.save();
+
+    // Create session (sets httpOnly cookie)
+    await createSession(
+      user._id.toString(),
+      user.name,
+      user.email,
+      user.role
+    );
 
     // Return user data without password
     return NextResponse.json(
