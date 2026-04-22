@@ -68,7 +68,7 @@ export const MatchComponent = ({ match }: MatchComponentProps) => {
         {match.division}
       </h2>
       <h2 className="text-sm text-gray-600">
-        {matchDate.toDateString()} @ {match.location}
+        {matchDate.toDateString().slice(4)} @ {match.location}
       </h2>
       <h2 className="text-sm text-gray-600">
         {`${match.league} ${match.sport}`}
