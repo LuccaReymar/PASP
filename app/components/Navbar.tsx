@@ -19,33 +19,37 @@ const Navbar = () => {
         PA Support Program
       </Link>
       
-      <span className="absolute left-1/2 -translate-x-1/2 text-sm font-semibold">
-        <span
-          className={
-            (role == UserRole.ADMIN ? `bg-blue-400` : `bg-green-400`) +
-            " font-bold px-3 py-1 rounded-lg text-white"
-          }>
-          {role === UserRole.ADMIN ? "Admin Dashboard" : "PA Dashboard"}
+      {isLoggedIn && (
+        <span className="absolute left-1/2 -translate-x-1/2 text-sm font-semibold">
+          <span
+            className={
+              (role == UserRole.ADMIN ? `bg-blue-400` : `bg-green-400`) +
+              " font-bold px-3 py-1 rounded-lg text-white"
+            }>
+            {role === UserRole.ADMIN ? "Admin Dashboard" : "PA Dashboard"}
+          </span>
         </span>
-      </span>
+      )}
       <div className="flex gap-6">
-        <Link
-          href="/dashboard"
-          className="text-base font-semibold hover:text-blue-600 transition">
-          Dashboard
-        </Link>
-        <Link
-          href="/search"
-          className="text-base font-semibold hover:text-blue-600 transition">
-          Search
-        </Link>
-        {isLoggedIn ? (
-          <button
-            onClick={handleLogout}
-            className="px-3 bg-red-500 text-white rounded hover:bg-red-600 text-sm">
-            Logout
-          </button>
-        ) : null}
+        {isLoggedIn && (
+          <>
+            <Link
+              href="/dashboard"
+              className="text-base font-semibold hover:text-blue-600 transition">
+              Dashboard
+            </Link>
+            <Link
+              href="/search"
+              className="text-base font-semibold hover:text-blue-600 transition">
+              Search
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="px-3 bg-red-500 text-white rounded hover:bg-red-600 text-sm">
+              Logout
+            </button>
+          </>
+        )}
       </div>
       
     </div>
