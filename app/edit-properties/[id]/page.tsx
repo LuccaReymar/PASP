@@ -215,7 +215,7 @@ export default function EditProperties() {
 
             <div className="mb-8">
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                Date & Time *
+                Date *
               </label>
               <input
                 type="date"

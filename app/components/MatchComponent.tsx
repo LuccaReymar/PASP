@@ -82,19 +82,12 @@ export const MatchComponent = ({ match }: MatchComponentProps) => {
           className={`absolute top-0 bg-white border border-gray-300 rounded shadow-lg z-20 min-w-[160px] ${
             dropdownPosition === "right" ? "left-full ml-2" : "right-full mr-2"
           }`}>
-          {!isUpcoming && (
-            <Link
-              href={`/edit-results/${matchId}`}
-              onClick={(e) => e.stopPropagation()}
-              className={`block px-4 py-2 text-sm hover:bg-blue-50 ${role === UserRole.ADMIN ? "border-b" : ""}`}>
-              Edit Results
-            </Link>
-          )}
-          {isUpcoming && (
-            <div className="block px-4 py-2 text-sm text-gray-400 cursor-not-allowed">
-              Edit Results
-            </div>
-          )}
+          <Link
+            href={`/edit-results/${matchId}`}
+            onClick={(e) => e.stopPropagation()}
+            className={`block px-4 py-2 text-sm hover:bg-blue-50 ${role === UserRole.ADMIN ? "border-b" : ""}`}>
+            Edit Results
+          </Link>
           {role === UserRole.ADMIN && (
             <Link
               href={`/edit-properties/${matchId}`}
